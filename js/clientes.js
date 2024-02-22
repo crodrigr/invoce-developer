@@ -60,6 +60,40 @@ const crearCliente=()=>{
 
 }
 
+const mostrarListado=()=>{
+    const clientesForm = document.getElementById('clientes-form');
+    const listadoClientes = document.getElementById('listado-clientes');
+    
+    clientesForm.style.display='none';
+    listadoClientes.style.display='block';
+
+    const ul=document.createElement('ul');
+
+    for(const cliente of listaClientes){
+        const li=document.createElement('li');
+        li.textContent= `ID: ${cliente.id}, Nombre: ${cliente.nombre}, Edad: ${cliente.edad}, Email: ${cliente.email}`;
+        ul.appendChild(li);
+    }
+
+    listadoClientes.innerHTML='';
+    listadoClientes.appendChild(ul);
+
+    const volverButton=document.createElement('button');
+    volverButton.textContent='Volver al Formulario';
+    volverButton.addEventListener('click',volverFormulario);
+    listadoClientes.appendChild(volverButton);
+    
+}
+
+const volverFormulario=()=>{
+    const clientesForm=document.getElementById('clientes-form');
+    const listadoClientes = document.getElementById('listado-clientes');
+
+    listadoClientes.style.display='none';
+    clientesForm.style.display='block';
+    
+}
+
 
 
 
