@@ -144,5 +144,77 @@ const crearFactura=()=>{
 
 }
 
+const mostrarListadoFacturas=()=>{
+    const facturasForm = document.getElementById('facturas-form');
+    const listadoFacturas = document.getElementById('listado-facturas');
+
+    // Ocultar formulario de facturas
+    facturasForm.style.display = 'none';
+
+    // Mostrar listado de facturas
+    listadoFacturas.style.display = 'block';
+
+    // Crear una lista (ul) para mostrar las facturas
+    const ul = document.createElement('ul');
+    ul.style.listStyleType = 'none';
+    ul.style.padding = '0';
+
+    // Recorrer la lista de facturas y agregar cada factura como un elemento de lista (li)
+    for (const factura of listaFacturas) {
+        const li = document.createElement('li');
+        li.style.marginBottom = '15px';
+        li.style.borderBottom = '1px solid #ccc';
+        li.style.paddingBottom = '10px';
+
+        // Comprobación para asegurarse de que factura.fecha es un objeto Date
+        const fecha = factura.fecha instanceof Date ? factura.fecha.toLocaleDateString() : 'Fecha no válida';
+
+        const fechaCliente = document.createElement('div');
+        fechaCliente.style.fontWeight = 'bold';
+        fechaCliente.textContent = `Fecha: ${fecha}, Cliente: ${factura.cliente.nombre}, Total: ${factura.total}`;
+        li.appendChild(fechaCliente);
+
+        const itemsUl = document.createElement('ul');
+        itemsUl.style.listStyleType = 'none';
+        itemsUl.style.padding = '0';
+        
+        // Recorrer los items de la factura y agregar cada item como un elemento de lista (li)
+        for (const item of factura.items) {
+            const itemLi = document.createElement('li');
+            itemLi.textContent = `Producto: ${item}`;
+            itemsUl.appendChild(itemLi);
+        }
+
+        li.appendChild(itemsUl);
+        ul.appendChild(li);
+    }
+
+    // Limpiar el contenido anterior del contenedor de listado de facturas
+    listadoFacturas.innerHTML = '';
+
+    // Agregar la lista al contenedor
+    listadoFacturas.appendChild(ul);
+
+    // Agregar botón para volver al formulario de facturas
+    const volverButton = document.createElement('button');
+    volverButton.textContent = 'Volver al Formulario de Facturas';
+    volverButton.addEventListener('click', volverAlFormularioFacturas);
+    listadoFacturas.appendChild(volverButton);
+
+}
+
+const volverAlFormularioFacturas=()=>{
+    const facturasForm = document.getElementById('facturas-form');
+    const listadoFacturas = document.getElementById('listado-facturas');
+
+    // Ocultar listado de facturas
+    listadoFacturas.style.display = 'none';
+
+    // Mostrar formulario de facturas
+    facturasForm.style.display = 'block';
+   
+
+}
+
 
 
