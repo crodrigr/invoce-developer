@@ -1,15 +1,44 @@
 const listaClientes=[];
 
-const cargarClientes=()=>{   
-    for(let i=0;i<=10;i++){
-        const nuevoCliente={
-            id:i,
-            nombre:faker.name.findName(),
-            edad: Math.floor(Math.random*30)+18,
-            email: faker.internet.email()
-        };
-        listaClientes.push(nuevoCliente);
-    }    
+
+const loadClientes= async()=>{
+    try{
+
+        const respuesta=await fetch('http://localhost:3000/clientes');
+
+        if(!respuesta.ok){
+           throw new Error('Error al cargar clientes. Estado: ',respuesta.status);
+        }
+        const clientes=await respuesta.json();
+        listaClientes.push(...clientes);
+
+    }catch(error){
+        console.error("Error al cargar clientes",error.message);
+    }
+}
+
+
+const guardarCliente= async(nuevoCliente)=>{
+    try{
+
+        const respuesta=await fetch('http://localhost:3000/clientes',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify(nuevoCliente),
+        });
+
+        if(!respuesta.ok){
+           throw new Error('Error al crear el cliente. Estado: ',respuesta.status);
+        }
+        const clienteCreado=await respuesta.json();
+        
+        console.log('Cliente creado:', clienteCreado);
+
+    }catch(error){
+        console.error("Error al cargar clientes",error.message);
+    }
 }
 
 const cargarFormularioClientes=()=>{
@@ -48,6 +77,7 @@ const crearCliente=()=>{
     }
 
     listaClientes.push(nuevoCliente);
+    guardarCliente(nuevoCliente);
 
     nombreInput.value='';
     edadInput.value='';
@@ -61,7 +91,9 @@ const crearCliente=()=>{
 
 }
 
-const mostrarListado=()=>{
+const mostrarListado= async ()=>{
+    listaClientes.length=0;
+    await loadClientes();
     const clientesForm = document.getElementById('clientes-form');
     const listadoClientes = document.getElementById('listado-clientes');
     
