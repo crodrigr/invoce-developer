@@ -1,14 +1,43 @@
 const listaProductos = [];
 
-const cargarProductos=()=>{
-    for (let i = 1; i <= 10; i++) {
-        const nuevoProducto = {
-            codigo: `PROD${i}`,
-            descripcion: faker.commerce.productName(),
-            precio: parseFloat(faker.commerce.price(10, 100, 2))
-        };
 
-        listaProductos.push(nuevoProducto);
+const loadProductos= async()=>{
+    try{
+
+        listaProductos.length=0;
+        const respuesta=await fetch('http://localhost:3000/productos');
+
+        if(!respuesta.ok){
+           throw new Error('Error al cargar clientes. Estado: ',respuesta.status);
+        }
+        const productos=await respuesta.json();
+        listaProductos.push(...productos);
+
+    }catch(error){
+        console.error("Error al cargar clientes",error.message);
+    }
+}
+
+const guardarProducto= async(nuevoProducto)=>{
+    try{
+
+        const respuesta=await fetch('http://localhost:3000/productos',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify(nuevoProducto),
+        });
+
+        if(!respuesta.ok){
+           throw new Error('Error al crear el cliente. Estado: ',respuesta.status);
+        }
+        const productoCreado=await respuesta.json();
+        
+        console.log('Producto creado:', productoCreado);
+
+    }catch(error){
+        console.error("Error al cargar productos",error.message);
     }
 }
 
@@ -32,7 +61,7 @@ const cargarFormularioProductos=()=>{
     listadoProductos.style.display = 'none';
 }
 
-const crearProducto=()=>{
+const crearProducto=async ()=>{
     const codigoInput = document.getElementById('codigoProducto');
     const descripcionInput = document.getElementById('descripcionProducto');
     const precioInput = document.getElementById('precioProducto');
@@ -47,12 +76,15 @@ const crearProducto=()=>{
     }
 
     const nuevoProducto = {
+        id:listaProductos.length+1,
         codigo: codigo,
         descripcion: descripcion,
         precio: precio
     };
 
-    listaProductos.push(nuevoProducto);
+    
+    await guardarProducto(nuevoProducto);
+    await loadProductos();
     console.log('Producto creado:', nuevoProducto);
     console.log('Lista de productos:', listaProductos);
 
@@ -70,7 +102,8 @@ const crearProducto=()=>{
 
 }
 
-const mostrarListadoProductos=()=>{
+const mostrarListadoProductos=async ()=>{
+    await loadProductos();
     const productosForm = document.getElementById('productos-form');
     const listadoProductos = document.getElementById('listado-productos');
 

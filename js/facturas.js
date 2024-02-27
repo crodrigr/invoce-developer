@@ -1,5 +1,48 @@
 const listaFacturas=[];
 
+
+const loadFacturas= async()=>{
+    try{
+
+        const respuesta=await fetch('http://localhost:3000/facturas');
+
+        if(!respuesta.ok){
+           throw new Error('Error al cargar clientes. Estado: ',respuesta.status);
+        }
+        const facturas=await respuesta.json();
+        listaFacturas.push(...facturas);
+
+    }catch(error){
+        console.error("Error al cargar clientes",error.message);
+    }
+}
+
+const guardarFactura= async(nuevoFactura)=>{
+    try{
+
+        const respuesta=await fetch('http://localhost:3000/facturas',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify(nuevoFactura),
+        });
+
+        if(!respuesta.ok){
+           throw new Error('Error al crear el factura. Estado: ',respuesta.status);
+        }
+        const facturaCreado=await respuesta.json();
+        
+        console.log('Producto creado:', facturaCreado);
+
+    }catch(error){
+        console.error("Error al cargar factura",error.message);
+    }
+}
+
+
+
+
 const actulizarClientesEnFacturas=()=>{
     const clienteSelect=document.getElementById('clienteFactura');
     clienteSelect.innerHTML='';
@@ -120,10 +163,11 @@ const crearFactura=()=>{
         return;
     }
 
-    const cliente=listaClientes.find(c=>c.id===parseInt(clienteId));
+    const cliente=listaClientes.find(c=>c.id===clienteId);
 
      
       const nuevaFactura = {
+        id:listaFacturas.length+1,
         fecha: fecha,
         cliente: cliente,
         items: itemsFactura,
@@ -132,6 +176,7 @@ const crearFactura=()=>{
 
 
     listaFacturas.push(nuevaFactura);
+    guardarFactura(nuevaFactura);
 
     console.log("Factura creada ", nuevaFactura);
     console.log("Listado de facturas:", listaFacturas);
@@ -166,8 +211,8 @@ const mostrarListadoFacturas=()=>{
         li.style.borderBottom = '1px solid #ccc';
         li.style.paddingBottom = '10px';
 
-        // Comprobación para asegurarse de que factura.fecha es un objeto Date
-        const fecha = factura.fecha instanceof Date ? factura.fecha.toLocaleDateString() : 'Fecha no válida';
+
+        const fecha = factura.fecha;
 
         const fechaCliente = document.createElement('div');
         fechaCliente.style.fontWeight = 'bold';

@@ -1,8 +1,9 @@
-document.addEventListener('DOMContentLoaded',()=>{
-    loadClientes();
+document.addEventListener('DOMContentLoaded',async ()=>{
+    await loadClientes();
     cargarFormularioClientes();
-    cargarProductos();
+    await loadProductos();
     cargarFormularioProductos();
+    await loadFacturas();
     cargarFormularioFacturas();
 
 

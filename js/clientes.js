@@ -2,8 +2,9 @@ const listaClientes=[];
 
 
 const loadClientes= async()=>{
+   
     try{
-
+        listaClientes.length=0;
         const respuesta=await fetch('http://localhost:3000/clientes');
 
         if(!respuesta.ok){
@@ -33,6 +34,7 @@ const guardarCliente= async(nuevoCliente)=>{
            throw new Error('Error al crear el cliente. Estado: ',respuesta.status);
         }
         const clienteCreado=await respuesta.json();
+       
         
         console.log('Cliente creado:', clienteCreado);
 
@@ -60,7 +62,7 @@ const cargarFormularioClientes=()=>{
     listadoClientes.style.display='none';
 }
 
-const crearCliente=()=>{
+const crearCliente= async ()=>{
     const nombreInput=document.getElementById('nombreCliente');
     const edadInput=document.getElementById('edadCliente');
     const emailInput=document.getElementById('emailCliente');
@@ -76,9 +78,10 @@ const crearCliente=()=>{
         email: email
     }
 
-    listaClientes.push(nuevoCliente);
-    guardarCliente(nuevoCliente);
-
+  
+    await guardarCliente(nuevoCliente);
+    await loadClientes();
+   
     nombreInput.value='';
     edadInput.value='';
     emailInput.value='';
@@ -92,7 +95,6 @@ const crearCliente=()=>{
 }
 
 const mostrarListado= async ()=>{
-    listaClientes.length=0;
     await loadClientes();
     const clientesForm = document.getElementById('clientes-form');
     const listadoClientes = document.getElementById('listado-clientes');
